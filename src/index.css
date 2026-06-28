@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@media print {
+  /* Bulletproof print trick: hide everything by default, then expose only the print bundle */
+  body * {
+    visibility: hidden;
+  }
+  
+  #printable-pdf-pack, #printable-pdf-pack * {
+    visibility: visible;
+  }
+  
+  #printable-pdf-pack {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    display: block !important;
+  }
+  
+  /* Retain tables, borders, and page sizing cleanly */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+  
+  th, td {
+    border: 1px solid #cbd5e0 !important;
+    padding: 8px !important;
+  }
+  
+  .break-after-page {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+}
