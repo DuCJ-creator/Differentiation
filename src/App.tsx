@@ -765,10 +765,12 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
                 <span className="text-[10px] text-slate-500 block">
                   拖曳講義 (PDF、Word、圖片或文本) 至此或
                 </span>
-                <label className="text-[10px] text-indigo-600 font-bold hover:underline cursor-pointer block mt-1">
+                <label htmlFor="file-upload-input" className="text-[10px] text-indigo-600 font-bold hover:underline cursor-pointer block mt-1">
                   點擊選擇檔案
                   <input
                     type="file"
+                    id="file-upload-input"
+                    name="fileUploadInput"
                     accept=".txt,.md,.json,.pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
                     onChange={handleFileChange}
                     className="hidden"
@@ -793,11 +795,12 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
             {/* AI Dynamic custom lesson version generator */}
             <form onSubmit={handleCreateCustomVersion} className="pt-4 mt-2 space-y-2.5">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                <label htmlFor="custom-topic-input" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                   ✍️ 教材主題/或手動貼上
                 </label>
                 <input
                   type="text"
+                  name="customTopicInput"
                   value={customTopicInput}
                   onChange={(e) => setCustomTopicInput(e.target.value)}
                   placeholder="輸入課堂主題 (e.g. AI Technology...)"
@@ -808,7 +811,12 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
               </div>
 
               <div>
+                <label htmlFor="uploaded-text-textarea" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  📖 手動貼上英文教材
+                </label>
                 <textarea
+                  id="uploaded-text-textarea"
+                  name="uploadedText"
                   value={uploadedText}
                   onChange={(e) => setUploadedText(e.target.value)}
                   placeholder="或直接貼上長篇英文素材（將自動轉化切分為初/中/高三級教案、文法提示與寫作翻譯配對）"
