@@ -40,6 +40,17 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
   const [isGrading, setIsGrading] = useState(false);
   const [gradingResult, setGradingResult] = useState<any | null>(null);
 
+  // Helper to get dynamic scramble target sentence from lesson data
+  const getScrambleSentence = () => {
+    if (lesson.translationChallenge?.correctEnglish1) {
+      return lesson.translationChallenge.correctEnglish1
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    return "Learning English is helpful for beginners";
+  };
+
   // Initialize games when lesson changes
   useEffect(() => {
     if (lesson.vocabulary) {
@@ -55,7 +66,7 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
     }
     
     // Initialize scrambler with a sentence based on vocabulary and basic grammar
-    const targetSentence = "Many people keep dogs at home because they make us feel happy";
+    const targetSentence = getScrambleSentence();
     // We clean and split the sentence
     const tokens = targetSentence.split(" ").sort(() => Math.random() - 0.5);
     setScrambleWords(tokens);
@@ -158,7 +169,7 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
 
   const verifyScramble = () => {
     const userSentence = userScrambleChoice.join(" ").toLowerCase();
-    const cleanWordSet = "many people keep dogs at home because they make us feel happy".toLowerCase();
+    const cleanWordSet = getScrambleSentence().toLowerCase();
 
     if (userSentence === cleanWordSet) {
       playSuccessSound();
@@ -173,7 +184,7 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
 
   const resetScrambleGame = () => {
     playTapSound();
-    const targetSentence = "Many people keep dogs at home because they make us feel happy";
+    const targetSentence = getScrambleSentence();
     setScrambleWords(targetSentence.split(" ").sort(() => Math.random() - 0.5));
     setUserScrambleChoice([]);
     setScrambleComplete(false);
@@ -537,7 +548,7 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
               <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
               <div>
                 <span className="font-bold">非常優秀！完美文法拼圖成功！</span>
-                <p className="text-[11px] text-emerald-600/85 mt-0.5">"Many people keep dogs at home because they make us feel happy."</p>
+                <p className="text-[11px] text-emerald-600/85 mt-0.5">"{getScrambleSentence()}"</p>
               </div>
             </div>
           ) : (
