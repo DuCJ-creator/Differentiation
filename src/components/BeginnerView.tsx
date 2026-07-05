@@ -680,9 +680,10 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
         {/* Inputs */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-400 mb-1">學生英文答題句子 A (English Translation A)</label>
+            <label htmlFor="beginner-input-1" className="block text-xs font-bold text-slate-400 mb-1">學生英文答題句子 A (English Translation A)</label>
             <input
               type="text"
+              name="beginnerAnswer1"
               value={answer1}
               onChange={(e) => setAnswer1(e.target.value)}
               placeholder="Dogs are very..."
@@ -691,9 +692,10 @@ export default function BeginnerView({ lesson, onAddPoints, topic }: BeginnerVie
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-400 mb-1">學生英文答題句子 B (English Translation B)</label>
+            <label htmlFor="beginner-input-2" className="block text-xs font-bold text-slate-400 mb-1">學生英文答題句子 B (English Translation B)</label>
             <input
               type="text"
+              name="beginnerAnswer2"
               value={answer2}
               onChange={(e) => setAnswer2(e.target.value)}
               placeholder="They make..."
