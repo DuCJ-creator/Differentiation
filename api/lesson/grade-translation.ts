@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getGeminiClient, getOpenAIClient, buildGradingPrompt, localGrader } from "../../lib/ai";
+import { getGeminiClient, getOpenAIClient, buildGradingPrompt, localGrader } from "../../lib/ai.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
