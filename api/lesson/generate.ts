@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import mammoth from "mammoth";
-import { getGeminiClient, getOpenAIClient, buildLessonSystemPrompt, createSimulatedLesson } from "../../lib/ai";
+import { getGeminiClient, getOpenAIClient, buildLessonSystemPrompt, createSimulatedLesson } from "../../lib/ai.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
