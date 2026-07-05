@@ -613,9 +613,10 @@ export default function IntermediateView({ lesson, onAddPoints, topic }: Interme
         {/* Inputs */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-indigo-350 mb-1">學生中級譯文句子 A (English Translation A)</label>
+            <label htmlFor="intermediate-input-1" className="block text-xs font-bold text-indigo-350 mb-1">學生中級譯文句子 A (English Translation A)</label>
             <input
               type="text"
+              name="intermediateAnswer1"
               value={answer1}
               onChange={(e) => setAnswer1(e.target.value)}
               placeholder="Global temperatures are..."
@@ -624,9 +625,10 @@ export default function IntermediateView({ lesson, onAddPoints, topic }: Interme
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-indigo-350 mb-1">學生中級譯文句子 B (English Translation B)</label>
+            <label htmlFor="intermediate-input-2" className="block text-xs font-bold text-indigo-350 mb-1">學生中級譯文句子 B (English Translation B)</label>
             <input
               type="text"
+              name="intermediateAnswer2"
               value={answer2}
               onChange={(e) => setAnswer2(e.target.value)}
               placeholder="This poses a..."
