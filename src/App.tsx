@@ -51,7 +51,11 @@ export default function App() {
     let loaded: LessonVersion[] = [];
     if (savedLessons) {
       try {
-        loaded = JSON.parse(savedLessons).filter((l: any) => l.id !== "annual-traditions");
+        loaded = JSON.parse(savedLessons).filter((l: any) => 
+          l.id !== "annual-traditions" && 
+          !l.topic.toLowerCase().includes("annual traditions") &&
+          !l.topic.toLowerCase().includes("social bonds")
+        );
         if (loaded.length === 0) {
           loaded = DEFAULT_LESSONS;
         }
@@ -703,6 +707,36 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
         
         {/* Left column (col-span-3): Lesson Versions list and generator */}
         <aside className="lg:col-span-3 space-y-6">
+
+          {/* Differentiated Lesson List Section */}
+          <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm" id="lesson-history-list">
+            <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+              <BookOpen className="w-4 h-4 text-indigo-500" /> 選擇授課教案
+            </h3>
+            <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+              {lessons.map((l) => {
+                const isActive = l.id === activeLessonId;
+                return (
+                  <button
+                    key={l.id}
+                    onClick={() => {
+                      playTapSound();
+                      setActiveLessonId(l.id);
+                    }}
+                    type="button"
+                    className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold transition-all flex flex-col gap-0.5 border cursor-pointer ${
+                      isActive 
+                        ? "bg-indigo-50/80 text-indigo-900 border-indigo-200/60 shadow-xs" 
+                        : "text-slate-600 hover:bg-slate-50 border-transparent"
+                    }`}
+                  >
+                    <span className="truncate w-full block">{l.topic}</span>
+                    <span className="text-[9px] text-slate-400 font-normal">{l.createdAt}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
           {/* File Upload & Input Panel */}
           <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm" id="lesson-versions-selector">
