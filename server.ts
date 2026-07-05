@@ -11,7 +11,7 @@ import {
   buildGradingPrompt,
   createSimulatedLesson,
   localGrader,
-} from "./lib/ai";
+} from "./lib/ai.js";
 
 dotenv.config();
 
