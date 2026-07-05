@@ -703,9 +703,10 @@ ${data.grammarFeedback}
         {/* Inputs */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-rose-350 mb-1">學生高級倒裝譯文第一句 (English Translation A - Inverted)</label>
+            <label htmlFor="advanced-input-1" className="block text-xs font-bold text-rose-350 mb-1">學生高級倒裝譯文第一句 (English Translation A - Inverted)</label>
             <input
               type="text"
+              name="advancedAnswer1"
               value={answer1}
               onChange={(e) => setAnswer1(e.target.value)}
               placeholder="Not until we respect..."
@@ -714,9 +715,10 @@ ${data.grammarFeedback}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-rose-350 mb-1">學生高級虛擬譯文第二句 (English Translation B - Conditional)</label>
+            <label htmlFor="advanced-input-2" className="block text-xs font-bold text-rose-350 mb-1">學生高級虛擬譯文第二句 (English Translation B - Conditional)</label>
             <input
               type="text"
+              name="advancedAnswer2"
               value={answer2}
               onChange={(e) => setAnswer2(e.target.value)}
               placeholder="Otherwise, more ecosystems would..."
