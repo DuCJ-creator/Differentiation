@@ -2,5 +2,8 @@
   "name": "Differentiated English Tutor",
   "description": "An interactive, gamified English learning platform with Beginner, Intermediate, and Advanced levels featuring interactive vocabulary games, grammar structures, graphic organizers, and translation assessments.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API",
+    "MAJOR_CAPABILITY_SERVER_SIDE_OPENAI_API"
+  ]
 }
