@@ -1,4 +1,7 @@
-import pdfParse from "pdf-parse/lib/pdf-parse.js";
+import { PDFParse } from "pdf-parse";
+(pdf-parse v2 exports a PDFParse CLASS, not a callable function like v1 did.
+Passing { data: buffer } auto-converts a Node Buffer to Uint8Array.)
+  
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 
@@ -39,7 +42,19 @@ export function getOpenAIClient(): OpenAI | null {
 // ---------------------------------------------------------------------------
 // System prompt builder for /api/lesson/generate
 // ---------------------------------------------------------------------------
- 
+ export async function extractPdfText(buffer: Buffer): Promise<string> {
+  let parser: PDFParse | null = null;
+  try {
+    parser = new PDFParse({ data: buffer });
+    const result = await parser.getText();
+    return result.text || "";
+  } catch (err) {
+    console.error("Error extracting text from PDF with pdf-parse:", err);
+    return "";
+  } finally {
+    if (parser) await parser.destroy();
+  }
+}
 export async function extractPdfText(buffer: Buffer): Promise<string> {
   try {
     const data = await pdfParse(buffer);
