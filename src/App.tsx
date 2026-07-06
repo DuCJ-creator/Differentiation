@@ -477,15 +477,20 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
         else if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
       }
 
-      setUploadedFile({
-        name: file.name,
-        mimeType,
-        base64: base64String
-      });
-      setUploadedText(`[已成功載入上傳文件附件: ${file.name}]`);
-      setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
-      playTapSound();
-    };
+setUploadedFile({
+    name: file.name,
+    mimeType,
+    base64: base64String
+  });
+  // IMPORTANT: do NOT put a placeholder string into uploadedText here.
+  // uploadedText is sent to the API as the actual lesson material —
+  // a status message like "[file loaded: x.pdf]" would get sent to the
+  // AI as if it were the real content, producing an unrelated lesson.
+  // The uploadedFile object (shown in the UI badge below the dropzone)
+  // is what communicates "a file is attached" to the user instead.
+  setUploadedText("");
+  setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
+  playTapSound();
     reader.readAsArrayBuffer(file);
   };
 
@@ -526,10 +531,10 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
   // Generate dynamic custom Lesson version from input using Gemini/OpenAI backend endpoints
   const handleCreateCustomVersion = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customTopicInput.trim() && !uploadedText.trim()) {
-      alert("請提供「研讀主題」或「上傳教材內容」（或兩者皆提供）！");
-      return;
-    }
+    if (!customTopicInput.trim() && !uploadedText.trim() && !uploadedFile) {
+  alert("請提供「研讀主題」或「上傳教材內容」（或兩者皆提供）！");
+  return;
+}
     
     playTapSound();
     setIsGeneratingLesson(true);
