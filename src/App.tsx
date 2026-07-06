@@ -456,7 +456,7 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
     }
   };
 
-  const convertFileToBase64AndStore = (file: File) => {
+const convertFileToBase64AndStore = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const arrayBuffer = event.target?.result as ArrayBuffer;
@@ -477,37 +477,23 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
         else if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
       }
 
-setUploadedFile({
-    name: file.name,
-    mimeType,
-    base64: base64String
-  });
-  // IMPORTANT: do NOT put a placeholder string into uploadedText here.
-  // uploadedText is sent to the API as the actual lesson material —
-  // a status message like "[file loaded: x.pdf]" would get sent to the
-  // AI as if it were the real content, producing an unrelated lesson.
-  // The uploadedFile object (shown in the UI badge below the dropzone)
-  // is what communicates "a file is attached" to the user instead.
-  setUploadedText("");
-  setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
-  playTapSound();
+      setUploadedFile({
+        name: file.name,
+        mimeType,
+        base64: base64String
+      });
+      // IMPORTANT: do NOT put a placeholder string into uploadedText here.
+      // uploadedText is sent to the API as the actual lesson material —
+      // a status message like "[file loaded: x.pdf]" would get sent to the
+      // AI as if it were the real content, producing an unrelated lesson.
+      // The uploadedFile object (shown in the UI badge below the dropzone)
+      // is what communicates "a file is attached" to the user instead.
+      setUploadedText("");
+      setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
+      playTapSound();
+    };
     reader.readAsArrayBuffer(file);
   };
-
-  const processUploadedFile = (file: File) => {
-    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
-    if (ext === ".txt" || ext === ".md") {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const text = event.target?.result;
-        if (typeof text === "string" && text.trim() !== "") {
-          setUploadedText(text);
-          setUploadedFile(null);
-          setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
-          playTapSound();
-        }
-      };
-      reader.readAsText(file);
     } else {
       convertFileToBase64AndStore(file);
     }
