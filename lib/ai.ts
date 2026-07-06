@@ -1,3 +1,4 @@
+import pdfParse from "pdf-parse";
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 
@@ -38,7 +39,17 @@ export function getOpenAIClient(): OpenAI | null {
 // ---------------------------------------------------------------------------
 // System prompt builder for /api/lesson/generate
 // ---------------------------------------------------------------------------
-
+ 
+export async function extractPdfText(buffer: Buffer): Promise<string> {
+  try {
+    const data = await pdfParse(buffer);
+    return data.text || "";
+  } catch (err) {
+    console.error("Error extracting text from PDF with pdf-parse:", err);
+    return "";
+  }
+}
+ 
 export function buildLessonSystemPrompt(cleanTopic: string, hasMaterial: boolean): string {
   return `You are a professional, expert English teacher specialized in Differentiated Instruction.
 Your task is to craft a complete English teaching plan ${hasMaterial ? `BASED ON and ADAPTED FROM the provided teaching material.` : `on the topic: "${cleanTopic}"`} matching three student levels: 基礎 (Basic), 中級 (Essential), and 高級 (Advanced).
