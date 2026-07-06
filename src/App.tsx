@@ -456,7 +456,7 @@ ${lesson.advanced.graphicOrganizer?.map((g) => `* **[${g.type.toUpperCase()}]** 
     }
   };
 
-const convertFileToBase64AndStore = (file: File) => {
+  const convertFileToBase64AndStore = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const arrayBuffer = event.target?.result as ArrayBuffer;
@@ -482,8 +482,8 @@ const convertFileToBase64AndStore = (file: File) => {
         mimeType,
         base64: base64String
       });
-      // IMPORTANT: do NOT put a placeholder string into uploadedText here.
-      // uploadedText is sent to the API as the actual lesson material —
+      // IMPORTANT: do NOT put a placeholder status string into uploadedText
+      // here. uploadedText is sent to the API as the actual lesson material —
       // a status message like "[file loaded: x.pdf]" would get sent to the
       // AI as if it were the real content, producing an unrelated lesson.
       // The uploadedFile object (shown in the UI badge below the dropzone)
@@ -494,6 +494,21 @@ const convertFileToBase64AndStore = (file: File) => {
     };
     reader.readAsArrayBuffer(file);
   };
+
+  const processUploadedFile = (file: File) => {
+    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    if (ext === ".txt" || ext === ".md") {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result;
+        if (typeof text === "string" && text.trim() !== "") {
+          setUploadedText(text);
+          setUploadedFile(null);
+          setCustomTopicInput(file.name.replace(/\.[^/.]+$/, "") || file.name);
+          playTapSound();
+        }
+      };
+      reader.readAsText(file);
     } else {
       convertFileToBase64AndStore(file);
     }
@@ -518,9 +533,9 @@ const convertFileToBase64AndStore = (file: File) => {
   const handleCreateCustomVersion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customTopicInput.trim() && !uploadedText.trim() && !uploadedFile) {
-  alert("請提供「研讀主題」或「上傳教材內容」（或兩者皆提供）！");
-  return;
-}
+      alert("請提供「研讀主題」或「上傳教材內容」（或兩者皆提供）！");
+      return;
+    }
     
     playTapSound();
     setIsGeneratingLesson(true);
