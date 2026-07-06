@@ -1,6 +1,12 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import mammoth from "mammoth";
-import { getGeminiClient, getOpenAIClient, buildLessonSystemPrompt, createSimulatedLesson } from "../../lib/ai.js";
+import {
+  getGeminiClient,
+  getOpenAIClient,
+  buildLessonSystemPrompt,
+  createSimulatedLesson,
+  extractPdfText,
+} from "../../lib/ai.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -40,18 +46,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       } catch (docErr: any) {
         console.error("Error extracting text from doc:", docErr);
       }
-    } else if (mimeType.includes("pdf") || mimeType.startsWith("image/")) {
-      geminiFilePart = {
-        inlineData: { data: base64, mimeType },
-      };
-      console.log(`Prepared Gemini multimodal attachment: type=${mimeType}, size=${base64.length}`);
+    } else if (mimeType.includes("pdf")) {
+      // Extract real text from the PDF so it works regardless of which AI
+      // provider (Gemini or OpenAI) ends up handling the request.
+      const buffer = Buffer.from(base64, "base64");
+      finalMaterialText = await extractPdfText(buffer);
+      console.log(`Successfully extracted ${finalMaterialText.length} characters from PDF!`);
+
+      // Also keep the raw file available in case Gemini (multimodal) is
+      // active and configured — it can use the file directly as a bonus,
+      // but we no longer *depend* on this for the material to come through.
+      geminiFilePart = { inlineData: { data: base64, mimeType } };
+    } else if (mimeType.startsWith("image/")) {
+      // Images still require multimodal handling (Gemini). Not yet wired up
+      // for OpenAI's vision input in this endpoint.
+      geminiFilePart = { inlineData: { data: base64, mimeType } };
     }
   }
 
   const hasMaterial = !!(finalMaterialText && finalMaterialText.trim() !== "") || !!geminiFilePart;
   const cleanTopic = topic ? topic.trim().substring(0, 120) : "Custom Reading Analysis";
   const cleanMaterial = finalMaterialText ? finalMaterialText.trim().substring(0, 3000) : "";
-  console.log(`Generating lesson. Topic: "${cleanTopic}", HasMaterial: ${hasMaterial}, HasDirectFile: ${!!geminiFilePart}`);
+  console.log(`Generating lesson. Topic: "${cleanTopic}", HasMaterial: ${hasMaterial}, HasDirectFile: ${!!geminiFilePart}, MaterialChars: ${cleanMaterial.length}`);
 
   const gemini = getGeminiClient();
   const openai = getOpenAIClient();
@@ -95,6 +111,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json(finalLesson);
     } else if (openai) {
       console.log("Calling OpenAI API for lesson generation...");
+
+      if (!cleanMaterial && geminiFilePart) {
+        // We have a file (e.g. an image) but no extracted text and no
+        // Gemini key to read it multimodally. Be honest about this rather
+        // than silently generating an unrelated lesson from the topic alone.
+        console.warn("File was uploaded but no text could be extracted and OpenAI vision path is not wired up for this file type.");
+      }
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
