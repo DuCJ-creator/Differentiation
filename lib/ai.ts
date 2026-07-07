@@ -1,13 +1,7 @@
 import { PDFParse } from "pdf-parse";
-(pdf-parse v2 exports a PDFParse CLASS, not a callable function like v1 did.
-Passing { data: buffer } auto-converts a Node Buffer to Uint8Array.)
   
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
-
-// ---------------------------------------------------------------------------
-// Lazy-initialized clients (same pattern as the original server.ts)
-// ---------------------------------------------------------------------------
 
 let geminiClient: GoogleGenAI | null = null;
 export function getGeminiClient(): GoogleGenAI | null {
@@ -39,9 +33,6 @@ export function getOpenAIClient(): OpenAI | null {
   return openaiClient;
 }
 
-// ---------------------------------------------------------------------------
-// System prompt builder for /api/lesson/generate
-// ---------------------------------------------------------------------------
  export async function extractPdfText(buffer: Buffer): Promise<string> {
   let parser: PDFParse | null = null;
   try {
