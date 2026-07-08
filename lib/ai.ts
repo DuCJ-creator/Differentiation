@@ -1,4 +1,3 @@
-import { PDFParse } from "pdf-parse";
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 
@@ -33,16 +32,29 @@ export function getOpenAIClient(): OpenAI | null {
 }
 
 export async function extractPdfText(buffer: Buffer): Promise<string> {
-  let parser: PDFParse | null = null;
+  let parser: any = null;
   try {
+    // Dynamic import: if pdf-parse/pdfjs-dist throws anything during module
+    // load (a known risk in serverless environments), it happens INSIDE this
+    // try/catch and gets reported back as readable JSON, instead of crashing
+    // the whole function before our error handling even starts.
+    const { PDFParse } = await import("pdf-parse");
     parser = new PDFParse({ data: buffer });
     const result = await parser.getText();
     return result.text || "";
   } catch (err) {
     console.error("Error extracting text from PDF with pdf-parse:", err);
-    return "";
+    // Re-throw with a clear, identifiable message so the API route's own
+    // catch block surfaces this exact reason in its JSON response.
+    throw new Error(`PDF_EXTRACTION_FAILED: ${err instanceof Error ? err.message : String(err)}`);
   } finally {
-    if (parser) await parser.destroy();
+    if (parser) {
+      try {
+        await parser.destroy();
+      } catch {
+        // ignore cleanup errors
+      }
+    }
   }
 }
 
