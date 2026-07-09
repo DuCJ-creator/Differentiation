@@ -65,7 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const hasMaterial = !!(finalMaterialText && finalMaterialText.trim() !== "") || !!geminiFilePart;
     const cleanTopic = topic ? topic.trim().substring(0, 120) : "Custom Reading Analysis";
-    const cleanMaterial = finalMaterialText ? finalMaterialText.trim().substring(0, 3000) : "";
+    const cleanMaterial = finalMaterialText ? finalMaterialText.trim().substring(0, 8000) : "";
     console.log(`Generating lesson. Topic: "${cleanTopic}", HasMaterial: ${hasMaterial}, HasDirectFile: ${!!geminiFilePart}, MaterialChars: ${cleanMaterial.length}`);
 
     const gemini = getGeminiClient();
