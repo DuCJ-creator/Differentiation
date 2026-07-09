@@ -59,11 +59,44 @@ export async function extractPdfText(buffer: Buffer): Promise<string> {
 }
 
 export function buildLessonSystemPrompt(cleanTopic: string, hasMaterial: boolean): string {
-  return `You are a professional, expert English teacher specialized in Differentiated Instruction.
-Your task is to craft a complete English teaching plan ${hasMaterial ? `BASED ON and ADAPTED FROM the provided teaching material.` : `on the topic: "${cleanTopic}"`} matching three student levels: 基礎 (Basic), 中級 (Essential), and 高級 (Advanced).
-The language of instructions and translations should be Traditional Chinese (繁體中文).
+  return `You are a professional, expert English teacher specialized in Differentiated Instruction for Taiwanese students preparing for the GSAT (學測).
 
-Generate exactly a single valid JSON object representing a LessonVersion.
+${
+  hasMaterial
+    ? `You have been given REAL uploaded teaching material below. It may contain a numbered vocabulary word list, a reading article, or both.
+You MUST base every part of this lesson -- vocabulary, collocations, reading passages, comprehension questions, and grammar examples -- directly and specifically on this uploaded material.
+- If the material includes a numbered vocabulary list, you MUST use those exact words (or a close, representative subset of them) as your vocabulary/collocation items -- do not invent unrelated words.
+- If the material includes a reading passage, article, or story, the "text" field at all three levels (beginner/intermediate/advanced) MUST be a version of THAT SAME story -- same characters, same plot, same setting -- simplified for beginner and elevated in complexity for advanced. Do NOT replace it with a different, unrelated topic or story.
+- Comprehension questions (mainIdeaQuestion, mainIdeaOptions, readingDetails) must be answerable directly from the passage you wrote, which itself must reflect the uploaded material's actual content.
+- Do not fall back to a generic or unrelated example topic under any circumstances when material has been provided.`
+    : `No material was uploaded, so create original content on the topic: "${cleanTopic}".`
+}
+
+Generate exactly a single valid JSON object representing a LessonVersion, matching three student levels: 基礎 (Basic), 中級 (Essential), and 高級 (Advanced).
+
+=== LANGUAGE RULES (STRICT -- FOLLOW EXACTLY) ===
+Write ONLY in English (zero Chinese characters) for these fields:
+- text (all three levels)
+- mainIdeaQuestion, mainIdeaOptions (all three levels)
+- grammarTipTitle, grammarTipContent (all three levels)
+- vocabulary[].word, vocabulary[].definition, vocabulary[].example
+- collocations[].phrase, collocations[].verb, collocations[].noun
+- readingDetails[].question, readingDetails[].answer
+- advancedGrammar[].rule, advancedGrammar[].example, advancedGrammar[].explanation
+- graphicOrganizer[].label, graphicOrganizer[].description
+- criticalThinkingQuestion
+- translationChallenge.correctEnglish1, translationChallenge.correctEnglish2, translationChallenge.hints
+- gsatWritingPrompt.sampleEssay
+
+Write ONLY in Traditional Chinese (繁體中文) for these fields:
+- vocabulary[].chinese, collocations[].chinese (these are translations of the English word/phrase next to them)
+- translationChallenge.chineseSentence1, translationChallenge.chineseSentence2, translationChallenge.prompt
+- gsatWritingPrompt.title, gsatWritingPrompt.promptText, gsatWritingPrompt.paragraph1Prompt, gsatWritingPrompt.paragraph2Prompt, gsatWritingPrompt.guidelines
+
+Never mix languages within a single field (a "Chinese" field should contain zero English sentences beyond quoting an English word being translated, and an "English" field should contain zero Chinese characters).
+
+Every field in the schema below is REQUIRED -- do not omit or leave any field empty, even if it feels repetitive with other fields.
+
 JSON Schema:
 {
   "topic": string (the topic title or name you write/derive from the input),
